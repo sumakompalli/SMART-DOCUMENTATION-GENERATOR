@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)file:///C:/Users/ADMIN777/Downloads/index.html -->
+<html lang="en" data-theme="dark"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartDocs — AI Documentation Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./index_files/css2" rel="stylesheet">
+  <script src="./index_files/mermaid.min.js.download"></script>
+  <script src="./index_files/marked.min.js.download"></script>
+  <style>
+    /* ── CSS Variables ─────────────────────────────── */
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --bg3: #1a1a24;
+      --surface: #16161f;
+      --surface2: #1e1e2a;
+      --border: rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.12);
+      --text: #e8e8f0;
+      --text2: #8888a8;
+      --text3: #5555778;
+      --accent: #7c6af5;
+      --accent2: #a891ff;
+      --accent3: #4f3fd4;
+      --green: #3ddc84;
+      --red: #ff5c5c;
+      --orange: #ff9a3c;
+      --glow: rgba(124,106,245,0.25);
+      --radius: 12px;
+      --radius2: 20px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f4f4fa;
+      --bg2: #eaeaf4;
+      --bg3: #e0e0ee;
+      --surface: #ffffff;
+      --surface2: #f0f0fa;
+      --border: rgba(0,0,0,0.08);
+      --border2: rgba(0,0,0,0.15);
+      --text: #111128;
+      --text2: #555578;
+      --accent: #6654e0;
+      --accent2: #8875f5;
+      --accent3: #4f3fd4;
+      --green: #1a9e5a;
+      --red: #d63030;
+      --orange: #c97010;
+      --glow: rgba(102,84,224,0.15);
+    }
+
+    /* ── Reset & Base ──────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent2); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button { cursor: pointer; font-family: inherit; }
+    textarea, input { font-family: 'JetBrains Mono', monospace; }
+
+    /* ── Background Grid ───────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none; z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ── Navbar ────────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    [data-theme="light"] nav { background: rgba(244,244,250,0.9); }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
+    }
+    .nav-logo .dot { color: var(--accent); }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .nav-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* ── Buttons ───────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px;
+      border-radius: var(--radius);
+      font-size: 13px; font-weight: 600;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border2);
+      color: var(--text2);
+    }
+    .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      color: #fff;
+      box-shadow: 0 0 20px var(--glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 30px var(--glow), 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--accent);
+      color: var(--accent2);
+    }
+    .btn-outline:hover { background: var(--glow); }
+
+    .btn-sm { padding: 6px 14px; font-size: 12px; }
+    .btn-icon {
+      padding: 8px; background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text2);
+      font-size: 16px;
+    }
+    .btn-icon:hover { color: var(--text); border-color: var(--border2); }
+
+    /* ── Pages / Views ─────────────────────────────── */
+    .page { display: none; min-height: calc(100vh - 60px); position: relative; z-index: 1; }
+    .page.active { display: block; }
+
+    /* ── Auth Pages ────────────────────────────────── */
+    .auth-wrap {
+      display: flex; align-items: center; justify-content: center;
+      min-height: calc(100vh - 60px);
+      padding: 40px 20px;
+    }
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      padding: 40px;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px var(--glow);
+      animation: slideUp 0.4s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .auth-header { margin-bottom: 32px; text-align: center; }
+    .auth-header h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+    .auth-header p { color: var(--text2); font-size: 14px; font-family: 'JetBrains Mono', monospace; }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--text2); text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .form-group input {
+      width: 100%; padding: 12px 16px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text); font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    .form-error {
+      background: rgba(255,92,92,0.1);
+      border: 1px solid rgba(255,92,92,0.3);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      color: var(--red); font-size: 13px;
+      margin-bottom: 16px; display: none;
+    }
+    .form-error.visible { display: block; }
+
+    .form-success {
+      background: rgba(61,220,132,0.1);
+      border: 1px solid rgba(61,220,132,0.3);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      color: var(--green); font-size: 13px;
+      margin-bottom: 16px; display: none;
+    }
+    .form-success.visible { display: block; }
+
+    .auth-footer { margin-top: 24px; text-align: center; font-size: 13px; color: var(--text2); }
+    .auth-footer a { color: var(--accent2); font-weight: 600; }
+
+    .auth-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 24px 0; color: var(--text2); font-size: 12px;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* ── Dashboard / Main App ──────────────────────── */
+    .app-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* ── Sidebar ───────────────────────────────────── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      position: sticky; top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .sidebar-section { margin-bottom: 8px; }
+    .sidebar-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--text2); padding: 4px 12px;
+      margin-bottom: 4px;
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      color: var(--text2);
+      cursor: pointer; border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .sidebar-item:hover { background: var(--surface2); color: var(--text); }
+    .sidebar-item.active {
+      background: var(--glow);
+      border-color: rgba(124,106,245,0.3);
+      color: var(--accent2);
+    }
+    .sidebar-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+    .sidebar-user {
+      margin-top: auto;
+      padding: 12px;
+      background: var(--surface2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+    .sidebar-user .user-name { font-size: 13px; font-weight: 600; }
+    .sidebar-user .user-email { font-size: 11px; color: var(--text2); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+    /* ── Main Content ──────────────────────────────── */
+    .main-content { padding: 32px; overflow-y: auto; }
+
+    /* ── Panel Headers ─────────────────────────────── */
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .panel-title { font-size: 22px; font-weight: 800; }
+    .panel-sub { color: var(--text2); font-size: 13px; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
+
+    /* ── Input Section ─────────────────────────────── */
+    .input-tabs {
+      display: flex; gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+    .tab {
+      padding: 8px 20px; border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      color: var(--text2); background: transparent;
+      border: none;
+    }
+    .tab.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      color: #fff;
+      box-shadow: 0 2px 10px var(--glow);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .code-editor-wrap {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      overflow: hidden;
+    }
+    .editor-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+    }
+    .editor-toolbar .lang-badge {
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      color: var(--text2); background: var(--surface2);
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .editor-dots { display: flex; gap: 6px; }
+    .editor-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .editor-dot:nth-child(1) { background: #ff5f57; }
+    .editor-dot:nth-child(2) { background: #febc2e; }
+    .editor-dot:nth-child(3) { background: #28c840; }
+
+    textarea#codeInput {
+      width: 100%; min-height: 220px; padding: 20px;
+      background: transparent;
+      border: none; outline: none;
+      color: var(--text); font-size: 13px;
+      resize: vertical; line-height: 1.7;
+    }
+
+    .repo-input-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      padding: 24px;
+    }
+    .repo-url-row {
+      display: flex; gap: 12px; margin-bottom: 16px;
+    }
+    .repo-url-row input {
+      flex: 1; padding: 12px 16px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text); font-size: 13px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .repo-url-row input:focus { border-color: var(--accent); }
+
+    .repo-files-list {
+      display: none;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-height: 200px; overflow-y: auto;
+    }
+    .repo-files-list.visible { display: block; }
+    .repo-file-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px; font-family: 'JetBrains Mono', monospace;
+      color: var(--text2);
+    }
+    .repo-file-item:last-child { border-bottom: none; }
+    .repo-info-bar {
+      display: flex; gap: 16px; margin-bottom: 12px;
+      display: none;
+    }
+    .repo-info-bar.visible { display: flex; }
+    .repo-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-family: 'JetBrains Mono', monospace;
+      color: var(--accent2);
+      background: var(--glow);
+      padding: 4px 10px; border-radius: 20px;
+    }
+
+    .context-input {
+      margin-top: 16px;
+    }
+    .context-input label {
+      display: block; font-size: 11px; font-weight: 700;
+      color: var(--text2); text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .context-input input {
+      width: 100%; padding: 10px 14px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text); font-size: 13px;
+      outline: none; transition: border-color 0.2s;
+      font-family: 'Syne', sans-serif;
+    }
+    .context-input input:focus { border-color: var(--accent); }
+
+    .generate-btn-row {
+      display: flex; gap: 12px; margin-top: 20px; align-items: center;
+    }
+
+    /* ── Loading ───────────────────────────────────── */
+    .loading-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+      z-index: 500;
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 20px;
+    }
+    .loading-overlay.visible { display: flex; }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-size: 14px; color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+    /* ── Output Section ────────────────────────────── */
+    #outputSection { display: none; margin-top: 32px; }
+    #outputSection.visible { display: block; animation: slideUp 0.4s ease; }
+
+    .output-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .output-title { font-size: 20px; font-weight: 800; }
+    .model-badge {
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      background: var(--glow); color: var(--accent2);
+      padding: 4px 12px; border-radius: 20px;
+      border: 1px solid rgba(124,106,245,0.3);
+    }
+
+    .output-tabs {
+      display: flex; gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+    .output-tab {
+      padding: 8px 20px; border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      color: var(--text2); background: transparent;
+      border: none; flex: 1; text-align: center;
+    }
+    .output-tab.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      color: #fff;
+    }
+
+    .output-pane { display: none; }
+    .output-pane.active { display: block; }
+
+    /* ── Cards ─────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--text2); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title::before {
+      content: ''; display: block;
+      width: 3px; height: 14px;
+      background: linear-gradient(var(--accent), var(--accent3));
+      border-radius: 2px;
+    }
+
+    /* Summary card */
+    .summary-text {
+      font-size: 15px; line-height: 1.8; color: var(--text);
+      border-left: 3px solid var(--accent);
+      padding-left: 16px; font-style: italic;
+    }
+
+    /* Complexity badge */
+    .complexity-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .badge {
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      padding: 4px 10px; border-radius: 20px;
+      font-weight: 500;
+    }
+    .badge-lang { background: rgba(124,106,245,0.15); color: var(--accent2); border: 1px solid rgba(124,106,245,0.3); }
+    .badge-simple { background: rgba(61,220,132,0.15); color: var(--green); border: 1px solid rgba(61,220,132,0.3); }
+    .badge-moderate { background: rgba(255,154,60,0.15); color: var(--orange); border: 1px solid rgba(255,154,60,0.3); }
+    .badge-complex { background: rgba(255,92,92,0.15); color: var(--red); border: 1px solid rgba(255,92,92,0.3); }
+
+    /* Functions list */
+    .fn-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .fn-chip {
+      font-size: 12px; font-family: 'JetBrains Mono', monospace;
+      background: var(--bg3); color: var(--accent2);
+      padding: 4px 12px; border-radius: 6px;
+      border: 1px solid var(--border2);
+    }
+
+    /* Explanation */
+    .explanation-text {
+      font-size: 14px; line-height: 1.9; color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    /* Suggestions */
+    .suggestion-list { list-style: none; }
+    .suggestion-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: 13px; color: var(--text2);
+    }
+    .suggestion-list li:last-child { border-bottom: none; }
+    .suggestion-list li::before {
+      content: '→'; color: var(--accent); font-weight: 700;
+      margin-top: 1px; flex-shrink: 0;
+    }
+
+    /* README Tab */
+    .readme-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      overflow: hidden;
+    }
+    .readme-toolbar {
+      padding: 12px 20px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .readme-toolbar span { font-size: 13px; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+    .readme-content {
+      padding: 28px 32px;
+      font-size: 14px; line-height: 1.8;
+    }
+    .readme-content h1 { font-size: 22px; font-weight: 800; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    .readme-content h2 { font-size: 17px; font-weight: 700; margin: 24px 0 10px; }
+    .readme-content h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; }
+    .readme-content p { color: var(--text); margin-bottom: 12px; }
+    .readme-content code {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      background: var(--bg3); padding: 2px 6px; border-radius: 4px;
+      color: var(--accent2);
+    }
+    .readme-content pre {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin: 12px 0;
+      overflow-x: auto;
+    }
+    .readme-content pre code { background: none; padding: 0; color: var(--text); }
+    .readme-content ul, .readme-content ol {
+      padding-left: 20px; margin-bottom: 12px;
+    }
+    .readme-content li { margin-bottom: 4px; color: var(--text); }
+
+    /* Flowchart Tab */
+    .flowchart-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      overflow: hidden;
+    }
+    .flowchart-toolbar {
+      padding: 12px 20px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .flowchart-toolbar span { font-size: 13px; color: var(--text2); font-family: 'JetBrains Mono', monospace; }
+    #flowchartDiagram {
+      padding: 32px;
+      min-height: 300px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #flowchartDiagram svg { max-width: 100%; height: auto; }
+    .mermaid-source {
+      background: var(--bg3); border-top: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    .mermaid-source pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--text2);
+      white-space: pre-wrap; overflow-x: auto;
+    }
+    .source-toggle {
+      font-size: 11px; color: var(--text2);
+      cursor: pointer; font-family: 'JetBrains Mono', monospace;
+    }
+    .source-toggle:hover { color: var(--accent2); }
+
+    /* ── Error toast ───────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--red);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      max-width: 360px;
+      font-size: 13px; color: var(--text);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      z-index: 999;
+      display: none;
+      animation: slideInRight 0.3s ease;
+    }
+    .toast.visible { display: flex; align-items: center; gap: 10px; }
+    .toast.success { border-color: var(--green); }
+    @keyframes slideInRight {
+      from { transform: translateX(20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ── Responsive ────────────────────────────────── */
+    @media (max-width: 768px) {
+      .app-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main-content { padding: 20px; }
+      .repo-url-row { flex-direction: column; }
+      .auth-card { padding: 28px 24px; }
+    }
+
+    /* ── Utility ───────────────────────────────────── */
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .gap-2 { gap: 8px; }
+    .mt-1 { margin-top: 4px; }
+    .hidden { display: none !important; }
+    .w-full { width: 100%; }
+
+    /* ── Hero Gradient ─────────────────────────────── */
+    .hero-glow {
+      position: absolute; top: -100px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ──────────────── NAVBAR ──────────────── -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-icon">⚡</div>
+    Smart<span class="dot">Docs</span>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-icon" id="themeToggle" title="Toggle theme">🌙</button>
+    <div id="navAuth">
+      <button class="btn btn-ghost btn-sm" onclick="showPage(&#39;login&#39;)">Log In</button>
+      <button class="btn btn-primary btn-sm" onclick="showPage(&#39;signup&#39;)">Sign Up</button>
+    </div>
+    <div id="navUser" class="hidden" style="display:flex;align-items:center;gap:10px;">
+      <span id="navUserName" style="font-size:13px;color:var(--text2)"></span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ──────────────── LOADING OVERLAY ──────────────── -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Generating documentation...</div>
+</div>
+
+<!-- ──────────────── TOAST ──────────────── -->
+<div class="toast" id="toast">
+  <span id="toastIcon">❌</span>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- ══════════════ PAGE: LANDING ══════════════ -->
+<div class="page active" id="page-landing">
+  <div style="max-width:900px;margin:0 auto;padding:80px 24px;text-align:center;position:relative;">
+    <div class="hero-glow"></div>
+    <div style="display:inline-flex;align-items:center;gap:8px;background:var(--glow);border:1px solid rgba(124,106,245,0.3);border-radius:20px;padding:6px 16px;margin-bottom:32px;">
+      <span style="font-size:11px;font-family:&#39;JetBrains Mono&#39;,monospace;color:var(--accent2)">⚡ AI-Powered Documentation</span>
+    </div>
+    <h1 style="font-size:clamp(36px,6vw,64px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-2px;">
+      Turn Code into<br><span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Beautiful Docs</span>
+    </h1>
+    <p style="font-size:16px;color:var(--text2);max-width:560px;margin:0 auto 40px;line-height:1.7;font-family:&#39;JetBrains Mono&#39;,monospace;">
+      Paste code or a GitHub repo link. Get instant AI-powered explanations, README docs, and visual flowcharts.
+    </p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" style="padding:14px 32px;font-size:15px;" onclick="showPage(&#39;signup&#39;)">
+        Get Started Free →
+      </button>
+      <button class="btn btn-outline" style="padding:14px 32px;font-size:15px;" onclick="showPage(&#39;login&#39;)">
+        Log In
+      </button>
+    </div>
+    <!-- Feature Cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:80px;text-align:left;">
+      <div class="card" style="padding:20px;">
+        <div style="font-size:24px;margin-bottom:12px;">🤖</div>
+        <div style="font-weight:700;margin-bottom:6px;">AI Explanations</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">Powered by Groq or OpenAI for lightning-fast, detailed code breakdowns.</div>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="font-size:24px;margin-bottom:12px;">🐙</div>
+        <div style="font-weight:700;margin-bottom:6px;">GitHub Integration</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">Paste any public GitHub repo URL and auto-extract key files for analysis.</div>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="font-size:24px;margin-bottom:12px;">📊</div>
+        <div style="font-weight:700;margin-bottom:6px;">Code Flowcharts</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">Automatically convert logic into interactive Mermaid diagrams.</div>
+      </div>
+      <div class="card" style="padding:20px;">
+        <div style="font-size:24px;margin-bottom:12px;">📝</div>
+        <div style="font-weight:700;margin-bottom:6px;">README Generator</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;">Get a complete, professional README.md with usage examples.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: SIGNUP ══════════════ -->
+<div class="page" id="page-signup">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Create Account</h1>
+        <p>// Join SmartDocs today</p>
+      </div>
+      <div class="form-error" id="signupError"></div>
+      <div class="form-success" id="signupSuccess"></div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="signupName" placeholder="Ada Lovelace" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signupEmail" placeholder="ada@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signupPassword" placeholder="Min. 6 characters" autocomplete="new-password">
+      </div>
+      <button class="btn btn-primary w-full" id="signupBtn" onclick="signup()" style="justify-content:center;">
+        Create Account
+      </button>
+      <div class="auth-footer">
+        Already have an account? <a href="file:///C:/Users/ADMIN777/Downloads/index.html#" onclick="showPage(&#39;login&#39;)">Log In</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: LOGIN ══════════════ -->
+<div class="page" id="page-login">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Welcome Back</h1>
+        <p>// Sign in to your account</p>
+      </div>
+      <div class="form-error" id="loginError"></div>
+      <div class="form-success" id="loginSuccess"></div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="ada@example.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Your password" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary w-full" id="loginBtn" onclick="login()" style="justify-content:center;">
+        Log In
+      </button>
+      <div class="auth-divider">or</div>
+      <div class="auth-footer" style="margin-top:0;">
+        <span style="color:var(--text2);font-size:12px;">🔑 Demo: test@test.com / test123</span>
+      </div>
+      <div class="auth-footer">
+        No account? <a href="file:///C:/Users/ADMIN777/Downloads/index.html#" onclick="showPage(&#39;signup&#39;)">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: APP ══════════════ -->
+<div class="page" id="page-app">
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Workspace</div>
+        <div class="sidebar-item active" onclick="switchSidebarTab(&#39;generate&#39;)">
+          <span class="icon">⚡</span> Generate Docs
+        </div>
+        <div class="sidebar-item" onclick="switchSidebarTab(&#39;history&#39;)">
+          <span class="icon">📚</span> History
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Tools</div>
+        <div class="sidebar-item" onclick="switchSidebarTab(&#39;generate&#39;);document.querySelector(&#39;.tab[data-tab=repo]&#39;).click()">
+          <span class="icon">🐙</span> GitHub Repo
+        </div>
+        <div class="sidebar-item" onclick="showOutputTab(&#39;flowchart&#39;)">
+          <span class="icon">📊</span> Flowcharts
+        </div>
+        <div class="sidebar-item" onclick="showOutputTab(&#39;readme&#39;)">
+          <span class="icon">📝</span> README
+        </div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-name" id="sidebarUserName">—</div>
+        <div class="user-email" id="sidebarUserEmail">—</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ── Generate Panel ── -->
+      <div id="panel-generate">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Documentation Generator</div>
+            <div class="panel-sub">// Paste code or a GitHub repo URL below</div>
+          </div>
+        </div>
+
+        <!-- Input Mode Tabs -->
+        <div class="input-tabs">
+          <button class="tab active" data-tab="code" onclick="switchInputTab(&#39;code&#39;)">💻 Paste Code</button>
+          <button class="tab" data-tab="repo" onclick="switchInputTab(&#39;repo&#39;)">🐙 GitHub Repo</button>
+        </div>
+
+        <!-- Code Input Tab -->
+        <div class="tab-content active" id="tab-code">
+          <div class="code-editor-wrap">
+            <div class="editor-toolbar">
+              <div class="editor-dots">
+                <div class="editor-dot"></div>
+                <div class="editor-dot"></div>
+                <div class="editor-dot"></div>
+              </div>
+              <span class="lang-badge" id="langDetect">auto-detect</span>
+              <button class="btn btn-ghost btn-sm" onclick="clearCode()">Clear</button>
+            </div>
+            <textarea id="codeInput" placeholder="// Paste your code here...
+
+function greet(name) {
+  return &#39;Hello, &#39; + name + &#39;!&#39;;
+}
+" onkeyup="detectLang()"></textarea>
+          </div>
+          <div class="context-input">
+            <label>Additional Context (optional)</label>
+            <input type="text" id="codeContext" placeholder="e.g. This is a REST API authentication module">
+          </div>
+        </div>
+
+        <!-- Repo Input Tab -->
+        <div class="tab-content" id="tab-repo">
+          <div class="repo-input-wrap">
+            <div class="repo-url-row">
+              <input type="url" id="repoUrl" placeholder="https://github.com/owner/repository">
+              <button class="btn btn-primary" onclick="fetchRepo()">
+                Fetch Repo
+              </button>
+            </div>
+            <div class="repo-info-bar" id="repoInfoBar"></div>
+            <div class="repo-files-list" id="repoFilesList"></div>
+          </div>
+          <div class="context-input">
+            <label>Additional Context (optional)</label>
+            <input type="text" id="repoContext" placeholder="e.g. Focus on the authentication logic">
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <div class="generate-btn-row">
+          <button class="btn btn-primary" id="generateBtn" onclick="generateDocs()" style="padding:12px 28px;font-size:14px;">
+            ⚡ Generate Documentation
+          </button>
+          <span style="font-size:12px;color:var(--text2);font-family:&#39;JetBrains Mono&#39;,monospace;" id="apiNote">Backend: http://localhost:3001</span>
+        </div>
+
+        <!-- ── Output Section ── -->
+        <div id="outputSection">
+          <div class="output-header">
+            <div class="output-title">📄 Generated Documentation</div>
+            <span class="model-badge" id="modelBadge">—</span>
+          </div>
+
+          <!-- Output Tabs -->
+          <div class="output-tabs">
+            <button class="output-tab active" onclick="showOutputTab(&#39;overview&#39;)">Overview</button>
+            <button class="output-tab" onclick="showOutputTab(&#39;explanation&#39;)">Explanation</button>
+            <button class="output-tab" onclick="showOutputTab(&#39;readme&#39;)">README</button>
+            <button class="output-tab" onclick="showOutputTab(&#39;flowchart&#39;)">Flowchart</button>
+          </div>
+
+          <!-- Overview Pane -->
+          <div class="output-pane active" id="pane-overview">
+            <div class="card">
+              <div class="card-title">Summary</div>
+              <p class="summary-text" id="outSummary"></p>
+              <div class="complexity-row" id="outBadges"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Key Functions &amp; Classes</div>
+              <div class="fn-list" id="outFunctions"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Suggestions</div>
+              <ul class="suggestion-list" id="outSuggestions"></ul>
+            </div>
+          </div>
+
+          <!-- Explanation Pane -->
+          <div class="output-pane" id="pane-explanation">
+            <div class="card">
+              <div class="card-title">Detailed Explanation</div>
+              <div class="explanation-text" id="outExplanation"></div>
+            </div>
+          </div>
+
+          <!-- README Pane -->
+          <div class="output-pane" id="pane-readme">
+            <div class="readme-wrap">
+              <div class="readme-toolbar">
+                <span>📝 README.md</span>
+                <button class="btn btn-ghost btn-sm" onclick="copyReadme()">📋 Copy</button>
+              </div>
+              <div class="readme-content" id="outReadme"></div>
+            </div>
+          </div>
+
+          <!-- Flowchart Pane -->
+          <div class="output-pane" id="pane-flowchart">
+            <div class="flowchart-wrap">
+              <div class="flowchart-toolbar">
+                <span>📊 Logic Flowchart (Mermaid)</span>
+                <div style="display:flex;gap:8px;">
+                  <span class="source-toggle" onclick="toggleMermaidSource()">{ } Source</span>
+                  <button class="btn btn-ghost btn-sm" onclick="copyFlowchart()">📋 Copy</button>
+                </div>
+              </div>
+              <div id="flowchartDiagram"></div>
+              <div class="mermaid-source hidden" id="mermaidSource">
+                <pre id="mermaidSourceCode"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── History Panel (placeholder) ── -->
+      <div id="panel-history" class="hidden">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">History</div>
+            <div class="panel-sub">// Your recent documentation sessions</div>
+          </div>
+        </div>
+        <div class="card" style="text-align:center;padding:60px;">
+          <div style="font-size:48px;margin-bottom:16px;">📚</div>
+          <div style="color:var(--text2);font-family:&#39;JetBrains Mono&#39;,monospace;font-size:13px;">History coming soon</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ──────────────── JAVASCRIPT ──────────────── -->
+<script>
+// ══════════════════════════════════════════
+// CONFIG — Update this to your backend URL
+// ══════════════════════════════════════════
+const API_BASE = 'http://localhost:3001';
+
+// ── State ──────────────────────────────────
+let authToken = localStorage.getItem('smartdocs_token');
+let currentUser = JSON.parse(localStorage.getItem('smartdocs_user') || 'null');
+let fetchedRepoFiles = null;
+let currentInputTab = 'code';
+let lastDocs = null;
+
+// ── Init ───────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  mermaid.initialize({ startOnLoad: false, theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default' });
+  if (authToken && currentUser) {
+    updateNavForUser();
+    showPage('app');
+  } else {
+    showPage('landing');
+  }
+  // Enter key on auth forms
+  document.getElementById('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+  document.getElementById('signupPassword').addEventListener('keydown', e => { if (e.key === 'Enter') signup(); });
+  document.getElementById('repoUrl').addEventListener('keydown', e => { if (e.key === 'Enter') fetchRepo(); });
+  document.getElementById('apiNote').textContent = `Backend: ${API_BASE}`;
+});
+
+// ── Theme Toggle ───────────────────────────
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const html = document.documentElement;
+  const isDark = html.dataset.theme === 'dark';
+  html.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
+  mermaid.initialize({ theme: isDark ? 'default' : 'dark' });
+  if (lastDocs?.flowchart) renderFlowchart(lastDocs.flowchart);
+});
+
+// ── Page Navigation ────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${name}`)?.classList.add('active');
+}
+
+// ── Update Nav ─────────────────────────────
+function updateNavForUser() {
+  document.getElementById('navAuth').classList.add('hidden');
+  document.getElementById('navUser').classList.remove('hidden');
+  document.getElementById('navUserName').textContent = currentUser?.name || '';
+  document.getElementById('sidebarUserName').textContent = currentUser?.name || '';
+  document.getElementById('sidebarUserEmail').textContent = currentUser?.email || '';
+}
+
+// ── Logout ─────────────────────────────────
+function logout() {
+  authToken = null; currentUser = null;
+  localStorage.removeItem('smartdocs_token');
+  localStorage.removeItem('smartdocs_user');
+  document.getElementById('navAuth').classList.remove('hidden');
+  document.getElementById('navUser').classList.add('hidden');
+  showPage('landing');
+  showToast('Logged out successfully', 'success');
+}
+
+// ── Signup ─────────────────────────────────
+async function signup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const errEl = document.getElementById('signupError');
+  const sucEl = document.getElementById('signupSuccess');
+  errEl.classList.remove('visible'); sucEl.classList.remove('visible');
+
+  try {
+    setLoading(true, 'Creating your account...');
+    const res = await fetch(`${API_BASE}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password })
+    });
+    const data = await res.json();
+    setLoading(false);
+    if (!res.ok) { errEl.textContent = data.error; errEl.classList.add('visible'); return; }
+    authToken = data.token; currentUser = data.user;
+    localStorage.setItem('smartdocs_token', authToken);
+    localStorage.setItem('smartdocs_user', JSON.stringify(currentUser));
+    updateNavForUser();
+    sucEl.textContent = '✅ Account created! Redirecting...';
+    sucEl.classList.add('visible');
+    setTimeout(() => showPage('app'), 1000);
+  } catch (err) {
+    setLoading(false);
+    errEl.textContent = 'Cannot connect to server. Is the backend running?';
+    errEl.classList.add('visible');
+  }
+}
+
+// ── Login ──────────────────────────────────
+async function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.classList.remove('visible');
+
+  try {
+    setLoading(true, 'Logging in...');
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    setLoading(false);
+    if (!res.ok) { errEl.textContent = data.error; errEl.classList.add('visible'); return; }
+    authToken = data.token; currentUser = data.user;
+    localStorage.setItem('smartdocs_token', authToken);
+    localStorage.setItem('smartdocs_user', JSON.stringify(currentUser));
+    updateNavForUser();
+    showPage('app');
+  } catch (err) {
+    setLoading(false);
+    errEl.textContent = 'Cannot connect to server. Is the backend running?';
+    errEl.classList.add('visible');
+  }
+}
+
+// ── Fetch GitHub Repo ──────────────────────
+async function fetchRepo() {
+  const url = document.getElementById('repoUrl').value.trim();
+  if (!url) { showToast('Please enter a GitHub URL'); return; }
+
+  try {
+    setLoading(true, 'Fetching repository files...');
+    const res = await fetch(`${API_BASE}/fetch-repo`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      body: JSON.stringify({ repoUrl: url })
+    });
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) { handleAuthError(); return; }
+      showToast(data.error || 'Failed to fetch repo');
+      return;
+    }
+
+    fetchedRepoFiles = data.files;
+
+    // Show repo info
+    const infoBar = document.getElementById('repoInfoBar');
+    infoBar.innerHTML = `
+      <div class="repo-badge">🌟 ${data.repo.stars}</div>
+      <div class="repo-badge">💻 ${data.repo.language || 'Mixed'}</div>
+      <div class="repo-badge">📁 ${data.extractedFiles} / ${data.totalFiles} files</div>
+    `;
+    infoBar.classList.add('visible');
+
+    // Show files
+    const filesList = document.getElementById('repoFilesList');
+    filesList.innerHTML = data.files.map(f => `
+      <div class="repo-file-item">
+        <span>📄</span>
+        <span>${f.path}</span>
+        <span style="margin-left:auto;opacity:0.5">${(f.size/1024).toFixed(1)}kb</span>
+      </div>
+    `).join('');
+    filesList.classList.add('visible');
+
+    showToast(`Fetched ${data.extractedFiles} files from ${data.repo.name}`, 'success');
+  } catch (err) {
+    setLoading(false);
+    showToast('Cannot connect to server. Is the backend running?');
+  }
+}
+
+// ── Generate Docs ──────────────────────────
+async function generateDocs() {
+  const body = {};
+
+  if (currentInputTab === 'code') {
+    const code = document.getElementById('codeInput').value.trim();
+    if (!code) { showToast('Please paste some code first'); return; }
+    body.code = code;
+    body.context = document.getElementById('codeContext').value.trim();
+  } else {
+    if (!fetchedRepoFiles || fetchedRepoFiles.length === 0) {
+      showToast('Please fetch a GitHub repo first');
+      return;
+    }
+    body.files = fetchedRepoFiles;
+    body.context = document.getElementById('repoContext').value.trim();
+  }
+
+  try {
+    setLoading(true, 'Generating AI documentation...');
+    const res = await fetch(`${API_BASE}/generate-docs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    setLoading(false);
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) { handleAuthError(); return; }
+      showToast(data.error || 'Generation failed');
+      return;
+    }
+
+    lastDocs = data.docs;
+    renderOutput(data);
+    showToast('Documentation generated!', 'success');
+  } catch (err) {
+    setLoading(false);
+    showToast('Cannot connect to server. Is the backend running?');
+  }
+}
+
+// ── Render Output ──────────────────────────
+function renderOutput(data) {
+  const docs = data.docs;
+
+  // Model badge
+  document.getElementById('modelBadge').textContent = `${data.provider} / ${data.model}`;
+
+  // Overview
+  document.getElementById('outSummary').textContent = docs.summary || '—';
+
+  const complexity = docs.complexity || 'moderate';
+  document.getElementById('outBadges').innerHTML = `
+    <span class="badge badge-lang">${docs.language || 'unknown'}</span>
+    <span class="badge badge-${complexity}">${complexity}</span>
+  `;
+
+  const functions = docs.keyFunctions || [];
+  document.getElementById('outFunctions').innerHTML = functions.length
+    ? functions.map(f => `<span class="fn-chip">${f}</span>`).join('')
+    : '<span style="color:var(--text2);font-size:13px">None detected</span>';
+
+  const suggestions = docs.suggestions || [];
+  document.getElementById('outSuggestions').innerHTML = suggestions.length
+    ? suggestions.map(s => `<li>${s}</li>`).join('')
+    : '<li>No suggestions</li>';
+
+  // Explanation
+  document.getElementById('outExplanation').textContent = docs.explanation || '—';
+
+  // README (rendered markdown)
+  const readmeRaw = docs.readme || '';
+  document.getElementById('outReadme').innerHTML = marked.parse(readmeRaw);
+
+  // Flowchart
+  if (docs.flowchart) renderFlowchart(docs.flowchart);
+
+  // Show section
+  document.getElementById('outputSection').classList.add('visible');
+  showOutputTab('overview');
+  document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Render Flowchart ───────────────────────
+async function renderFlowchart(code) {
+  const container = document.getElementById('flowchartDiagram');
+  document.getElementById('mermaidSourceCode').textContent = code;
+
+  container.innerHTML = '<div style="color:var(--text2);font-family:JetBrains Mono,monospace;font-size:12px">Rendering diagram...</div>';
+  try {
+    const id = 'mermaid-' + Date.now();
+    const { svg } = await mermaid.render(id, code);
+    container.innerHTML = svg;
+  } catch (err) {
+    container.innerHTML = `
+      <div style="color:var(--orange);font-family:'JetBrains Mono',monospace;font-size:12px;padding:20px;text-align:center;">
+        ⚠️ Could not render diagram. The source is still available below.<br/>
+        <span style="opacity:0.6;font-size:11px">${err.message}</span>
+      </div>`;
+    document.getElementById('mermaidSource').classList.remove('hidden');
+  }
+}
+
+// ── Tab Switching ──────────────────────────
+function switchInputTab(name) {
+  currentInputTab = name;
+  document.querySelectorAll('.input-tabs .tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${name}"]`).classList.add('active');
+  document.getElementById(`tab-${name}`).classList.add('active');
+}
+
+function showOutputTab(name) {
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.output-pane').forEach(p => p.classList.remove('active'));
+  const tabs = document.querySelectorAll('.output-tab');
+  const tabNames = ['overview', 'explanation', 'readme', 'flowchart'];
+  const idx = tabNames.indexOf(name);
+  if (idx >= 0) tabs[idx]?.classList.add('active');
+  document.getElementById(`pane-${name}`)?.classList.add('active');
+
+  // Scroll to output section if it's visible
+  if (document.getElementById('outputSection').classList.contains('visible')) {
+    document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function switchSidebarTab(name) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('panel-generate').classList.add('hidden');
+  document.getElementById('panel-history').classList.add('hidden');
+  document.getElementById(`panel-${name}`)?.classList.remove('hidden');
+}
+
+// ── Utilities ──────────────────────────────
+function clearCode() {
+  document.getElementById('codeInput').value = '';
+  document.getElementById('langDetect').textContent = 'auto-detect';
+}
+
+function detectLang() {
+  const code = document.getElementById('codeInput').value;
+  const map = { 'def ': 'python', 'import React': 'jsx', 'function': 'javascript', 'class ': 'java/js', '<html': 'html', 'SELECT ': 'sql', 'fn ': 'rust', 'package main': 'go' };
+  for (const [k, v] of Object.entries(map)) {
+    if (code.includes(k)) { document.getElementById('langDetect').textContent = v; return; }
+  }
+  document.getElementById('langDetect').textContent = 'auto-detect';
+}
+
+function copyReadme() {
+  const raw = lastDocs?.readme || '';
+  navigator.clipboard.writeText(raw).then(() => showToast('README copied!', 'success'));
+}
+
+function copyFlowchart() {
+  const raw = lastDocs?.flowchart || '';
+  navigator.clipboard.writeText(raw).then(() => showToast('Flowchart source copied!', 'success'));
+}
+
+function toggleMermaidSource() {
+  document.getElementById('mermaidSource').classList.toggle('hidden');
+}
+
+function setLoading(show, text = 'Processing...') {
+  const overlay = document.getElementById('loadingOverlay');
+  document.getElementById('loadingText').textContent = text;
+  overlay.classList.toggle('visible', show);
+}
+
+function showToast(msg, type = 'error') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = type === 'success' ? '✅' : '❌';
+  toast.className = `toast visible ${type === 'success' ? 'success' : ''}`;
+  setTimeout(() => { toast.classList.remove('visible'); }, 4000);
+}
+
+function handleAuthError() {
+  authToken = null; currentUser = null;
+  localStorage.removeItem('smartdocs_token');
+  localStorage.removeItem('smartdocs_user');
+  showPage('login');
+  document.getElementById('loginError').textContent = 'Session expired. Please log in again.';
+  document.getElementById('loginError').classList.add('visible');
+}
+</script>
+
+
+</body>
+</html>
